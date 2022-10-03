@@ -1,0 +1,17 @@
+[package]
+name = "diary"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.81"
+chrono = "0.4.37"
+clap = { version = "4.5.4", features = ["derive"] }
+colored = "2.1.0"
+glob = "0.3.1"
+itertools = "0.12.1"
+
+[dev-dependencies]
+dircpy = "0.3.16"
+pretty_assertions = "1.4.0"
+test-case = "3.3.1"

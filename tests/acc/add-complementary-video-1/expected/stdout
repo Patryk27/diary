@@ -1,0 +1,12 @@
+Scanning
+
+Processing
+
+Executing
+  Copying source/IMG_001.jpg to diary:2018/01/02/12-34-56 001.jpg | 1/3
+  Removing source/IMG_001.jpg (just added into the diary) | 2/3
+  Removing source/IMG_001.mp4 (already in the diary as a photo) | 3/3
+
+Summary
+  Copied 1 file
+  Removed 2 files

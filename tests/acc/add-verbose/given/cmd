@@ -1,0 +1,1 @@
+diary add --diary $diary --source $source --verbose

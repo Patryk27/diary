@@ -1,0 +1,18 @@
+Scanning
+
+Processing
+
+Executing
+  Would copy source/2018-01-01.org to diary:2018/01/01/index.org | 1/9
+  Would copy source/2018-01-02.org to diary:2018/01/02/index.org | 2/9
+  Would copy source/2018-01-03.org to diary:2018/01/03/index.org | 3/9
+  Would copy source/image-a.jpg to diary:2018/01/02/image-a.jpg | 4/9
+  Would copy source/image-b.jpg to diary:2018/01/03/image-b.jpg | 5/9
+  Would copy source/image-c.jpg to diary:2018/01/04/image-c.jpg | 6/9
+  Would convert source/video.mp4 to /tmp/video.mp4 | 7/9
+  Would copy /tmp/video.mp4 to diary:2018/01/02/video.mp4 | 8/9
+  Would remove /tmp/video.mp4 (temporary artifact) | 9/9
+
+Summary
+  Would copy 7 files
+  Would remove 1 file

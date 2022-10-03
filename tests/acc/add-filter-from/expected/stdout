@@ -1,0 +1,19 @@
+Scanning
+
+Processing
+
+Executing
+  Copying source/2018-01-02.org to diary:2018/01/02/index.org | 1/10
+  Removing source/2018-01-02.org (just added into the diary) | 2/10
+  Copying source/2018-01-03.org to diary:2018/01/03/index.org | 3/10
+  Removing source/2018-01-03.org (just added into the diary) | 4/10
+  Copying source/image-a.jpg to diary:2018/01/02/image-a.jpg | 5/10
+  Removing source/image-a.jpg (just added into the diary) | 6/10
+  Copying source/image-b.jpg to diary:2018/01/03/image-b.jpg | 7/10
+  Removing source/image-b.jpg (just added into the diary) | 8/10
+  Copying source/image-c.jpg to diary:2018/01/04/image-c.jpg | 9/10
+  Removing source/image-c.jpg (just added into the diary) | 10/10
+
+Summary
+  Copied 5 files
+  Removed 5 files

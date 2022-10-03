@@ -1,0 +1,15 @@
+Scanning
+
+Processing
+
+Executing
+  Skipping source/2018-01-01.org (already in the diary) | 1/6
+  Skipping source/2018-01-02.org (already in the diary) | 2/6
+  Copying source/2018-01-03.org to diary:2018/01/03/index.org | 3/6
+  Skipping source/image-a.jpg (already in the diary) | 4/6
+  Copying source/image-b.jpg to diary:2018/01/03/image-b.jpg | 5/6
+  Skipping source/image-c.jpg (already in the diary) | 6/6
+
+Summary
+  Skipped 4 files
+  Copied 2 files

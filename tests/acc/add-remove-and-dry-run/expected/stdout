@@ -1,0 +1,21 @@
+Scanning
+
+Processing
+
+Executing
+  Would copy source/2018-01-01.org to diary:2018/01/01/index.org | 1/12
+  Would remove source/2018-01-01.org (just added into the diary) | 2/12
+  Would copy source/2018-01-02.org to diary:2018/01/02/index.org | 3/12
+  Would remove source/2018-01-02.org (just added into the diary) | 4/12
+  Would copy source/2018-01-03.org to diary:2018/01/03/index.org | 5/12
+  Would remove source/2018-01-03.org (just added into the diary) | 6/12
+  Would copy source/image-a.jpg to diary:2018/01/02/image-a.jpg | 7/12
+  Would remove source/image-a.jpg (just added into the diary) | 8/12
+  Would copy source/image-b.jpg to diary:2018/01/03/image-b.jpg | 9/12
+  Would remove source/image-b.jpg (just added into the diary) | 10/12
+  Would copy source/image-c.jpg to diary:2018/01/04/image-c.jpg | 11/12
+  Would remove source/image-c.jpg (just added into the diary) | 12/12
+
+Summary
+  Would copy 6 files
+  Would remove 6 files

@@ -1,0 +1,1 @@
+diary add --diary $diary --source $source --on 2018-01-02 --remove

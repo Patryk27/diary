@@ -1,0 +1,20 @@
+Scanning
+  Found source/2018-01-01.org
+  Found source/2018-01-02.org
+  Found source/2018-01-03.org
+  Found source/image-a.jpg
+  Found source/image-b.jpg
+  Found source/image-c.jpg
+
+Processing
+
+Executing
+  Copying source/2018-01-01.org to diary:2018/01/01/index.org | 1/6
+  Copying source/2018-01-02.org to diary:2018/01/02/index.org | 2/6
+  Copying source/2018-01-03.org to diary:2018/01/03/index.org | 3/6
+  Copying source/image-a.jpg to diary:2018/01/02/image-a.jpg | 4/6
+  Copying source/image-b.jpg to diary:2018/01/03/image-b.jpg | 5/6
+  Copying source/image-c.jpg to diary:2018/01/04/image-c.jpg | 6/6
+
+Summary
+  Copied 6 files
