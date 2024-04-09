@@ -104,8 +104,11 @@ pub enum SourceFileType {
 
 impl SourceFileType {
     fn new(path: &Path, stem: &str, ext: &str) -> Result<Option<Self>> {
-        let now = || -> Result<_> {
-            Ok(DateTime::<Local>::from(path.metadata()?.created()?).naive_local())
+        let created_or_modified_at = || -> Result<_> {
+            let metadata = path.metadata()?;
+            let date = metadata.created().or_else(|_| metadata.modified())?;
+
+            Ok(DateTime::<Local>::from(date).naive_local())
         };
 
         match ext {
@@ -140,7 +143,7 @@ impl SourceFileType {
                 let date = if let Some(date) = extract_media_datetime(path, "-DateTimeOriginal")? {
                     date
                 } else {
-                    now()?
+                    created_or_modified_at()?
                 };
 
                 let id = stem.strip_prefix("IMG_").map(|id| id.to_owned());
@@ -152,7 +155,7 @@ impl SourceFileType {
                 let date = if let Some(date) = extract_media_datetime(path, "-MediaCreateDate")? {
                     date
                 } else {
-                    now()?
+                    created_or_modified_at()?
                 };
 
                 let id = stem.strip_prefix("IMG_").map(|id| id.to_owned());
