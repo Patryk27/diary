@@ -148,7 +148,7 @@ impl SourceFileType {
                 Ok(Some(Self::Photo { date, id }))
             }
 
-            "hevc" | "mov" | "mp4" => {
+            "heic" | "mov" | "mp4" => {
                 let date = if let Some(date) = extract_media_datetime(path, "-MediaCreateDate")? {
                     date
                 } else {
