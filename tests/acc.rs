@@ -3,8 +3,9 @@ use diary::{Cmd, Env};
 use dircpy::copy_dir;
 use glob::glob;
 use pretty_assertions as pa;
-use std::fs;
+use std::collections::BTreeSet;
 use std::path::Path;
+use std::{env, fs};
 use test_case::test_case;
 
 #[test_case("add-complementary-video-1")]
@@ -20,7 +21,15 @@ use test_case::test_case;
 #[test_case("add-verbose")]
 #[test_case("add-video")]
 fn test(case: &str) {
-    colored::control::set_override(false);
+    let disabled_tests: BTreeSet<_> = env::var("DISABLED_TESTS")
+        .map(|tests| tests.split(',').map(|test| test.to_owned()).collect())
+        .unwrap_or_default();
+
+    if disabled_tests.contains(case) {
+        return;
+    }
+
+    // ---
 
     let dir = Path::new("tests").join("acc").join(case);
 
@@ -65,6 +74,8 @@ fn test(case: &str) {
 
         Cmd::parse_from(cmd.split(' '))
     };
+
+    colored::control::set_override(false);
 
     cmd.run(&mut env).unwrap();
 

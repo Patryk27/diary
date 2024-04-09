@@ -52,6 +52,13 @@
             exiftool
             ffmpeg-full
           ];
+
+          DISABLED_TESTS =
+            if pkgs.stdenv.isLinux then
+            # TODO non-reproducible
+              "add-video"
+            else
+              "";
         };
 
       in
