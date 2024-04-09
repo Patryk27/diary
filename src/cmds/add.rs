@@ -389,17 +389,22 @@ impl AddCmd {
         )?;
 
         if !self.dry_run {
-            let out = Command::new("ffmpeg")
-                .arg("-nostdin")
+            let mut cmd = Command::new("ffmpeg");
+
+            cmd.arg("-nostdin")
                 .arg("-i")
                 .arg(src)
                 .arg("-vcodec")
                 .arg("libx265")
                 .arg("-tag:v")
-                .arg("hvc1")
-                .arg(dst)
-                .output()
-                .context("Couldn't spawn ffmpeg")?;
+                .arg("hvc1");
+
+            cmd.args(["-b:v", "512"]);
+            cmd.arg("-bitexact");
+
+            cmd.arg(dst);
+
+            let out = cmd.output().context("Couldn't spawn ffmpeg")?;
 
             if !out.status.success() {
                 let stdout = String::from_utf8_lossy(&out.stdout);
