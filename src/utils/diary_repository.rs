@@ -64,6 +64,35 @@ impl DiaryRepository {
     pub fn has(&self, id: &DiaryFileId) -> Result<bool> {
         Ok(self.file(id).try_exists()?)
     }
+
+    pub fn find_by_date(&self, date: NaiveDate) -> Result<Vec<DiaryFileId>> {
+        let dir = self.dir(date);
+
+        if !dir.try_exists()? {
+            return Ok(Default::default());
+        }
+
+        fs::read_dir(&dir)?
+            .map(|entry| {
+                let entry = entry?;
+
+                if entry.file_type()?.is_dir() {
+                    return Err(anyhow!(
+                        "Found an unexpected directory: {}",
+                        entry.path().display()
+                    ));
+                }
+
+                let name = entry
+                    .file_name()
+                    .to_str()
+                    .context("File has non-Unicode name")?
+                    .to_owned();
+
+                Ok(DiaryFileId { date, name })
+            })
+            .collect()
+    }
 }
 
 #[derive(Debug)]

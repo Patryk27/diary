@@ -161,14 +161,33 @@ impl AddCmd {
         );
 
         if diary.has(&dst)? {
-            Ok(vec![Step::skip_or_remove(
+            return Ok(vec![Step::skip_or_remove(
                 file.path.clone(),
                 "already in the diary",
                 self.remove,
-            )])
-        } else {
-            Ok(Step::copy_and_remove(file.path.clone(), dst, self.remove).collect())
+            )]);
         }
+
+        if let Some(file_id) = file_id {
+            let already_exists = diary
+                .find_by_date(file_dt.date())?
+                .into_iter()
+                .any(|entry| {
+                    ["jpg", "png"]
+                        .iter()
+                        .any(|ext| entry.name.ends_with(&format!(" {}.{}", file_id, ext)))
+                });
+
+            if already_exists {
+                return Ok(vec![Step::skip_or_remove(
+                    file.path.clone(),
+                    "already in the diary - under a different timestamp, though!",
+                    self.remove,
+                )]);
+            }
+        }
+
+        Ok(Step::copy_and_remove(file.path.clone(), dst, self.remove).collect())
     }
 
     fn process_video(
@@ -183,8 +202,9 @@ impl AddCmd {
         let mk_dst = |ext: &str| DiaryFileId::new(file_dt.date(), format!("{}.{}", name, ext));
 
         let dst = mk_dst("mp4");
-        let dst_jpg = mk_dst("jpg");
         let dst_heic = mk_dst("heic");
+        let dst_jpg = mk_dst("jpg");
+        let dst_png = mk_dst("png");
 
         if diary.has(&dst)? || diary.has(&dst_heic)? {
             return Ok(vec![Step::skip_or_remove(
@@ -203,12 +223,31 @@ impl AddCmd {
                 }
             });
 
-        if diary.has(&dst_jpg)? || will_have_photo {
+        if diary.has(&dst_jpg)? || diary.has(&dst_png)? || will_have_photo {
             return Ok(vec![Step::skip_or_remove(
                 file.path.clone(),
                 "already in the diary as a photo",
                 self.remove,
             )]);
+        }
+
+        if let Some(file_id) = file_id {
+            let already_exists = diary
+                .find_by_date(file_dt.date())?
+                .into_iter()
+                .any(|entry| {
+                    ["mp4", "heic", "jpg", "png"]
+                        .iter()
+                        .any(|ext| entry.name.ends_with(&format!(" {}.{}", file_id, ext)))
+                });
+
+            if already_exists {
+                return Ok(vec![Step::skip_or_remove(
+                    file.path.clone(),
+                    "already in the diary - under a different timestamp, though!",
+                    self.remove,
+                )]);
+            }
         }
 
         let tmp = Path::new("/tmp/video.mp4");
