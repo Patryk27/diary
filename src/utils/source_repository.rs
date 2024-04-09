@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Context, Result};
-use chrono::{DateTime, Local, NaiveDate, NaiveDateTime, NaiveTime};
+use chrono::{DateTime, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
 use glob::glob;
 use itertools::Itertools;
 use std::path::{Path, PathBuf};
@@ -226,20 +226,25 @@ fn parse_exiftool_date(s: &str) -> Option<NaiveDateTime> {
         t_s
     };
 
-    Some(NaiveDateTime::new(
+    let dt = NaiveDateTime::new(
         NaiveDate::from_ymd_opt(parse(d_y)?, parse(d_m)?, parse(d_d)?)?,
         NaiveTime::from_hms_opt(parse(t_h)?, parse(t_m)?, parse(t_s)?)?,
-    ))
+    );
+
+    Some(dt + Local.offset_from_utc_date(&dt.date()))
 }
 
 #[cfg(test)]
 mod tests {
+    use std::env;
     use test_case::test_case;
 
     #[test_case("2016:04:23 20:19:55", "2016-04-23 20:19:55")]
     #[test_case("2016:04:23 20:19:55.1234", "2016-04-23 20:19:55")]
     #[test_case("2016:04:23 20:19:55-20:19", "2016-04-23 20:19:55")]
     fn parse_exiftool_date(given: &str, expected: &str) {
+        env::set_var("TZ", "UTC");
+
         let actual = super::parse_exiftool_date(given).unwrap().to_string();
 
         assert_eq!(expected, actual);

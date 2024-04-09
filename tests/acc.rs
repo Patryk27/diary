@@ -31,6 +31,11 @@ fn test(case: &str) {
 
     // ---
 
+    colored::control::set_override(false);
+    env::set_var("TZ", "UTC");
+
+    // ---
+
     let dir = Path::new("tests").join("acc").join(case);
 
     let given = dir.join("given");
@@ -74,8 +79,6 @@ fn test(case: &str) {
 
         Cmd::parse_from(cmd.split(' '))
     };
-
-    colored::control::set_override(false);
 
     cmd.run(&mut env).unwrap();
 
