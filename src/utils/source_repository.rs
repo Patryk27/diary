@@ -139,7 +139,7 @@ impl SourceFileType {
                 }))
             }
 
-            "jpg" | "png" | "webp" => {
+            "jpg" | "png" | "webp" | "heic" => {
                 let date = if let Some(date) = extract_media_datetime(path, "-DateTimeOriginal")? {
                     date
                 } else {
@@ -151,7 +151,7 @@ impl SourceFileType {
                 Ok(Some(Self::Photo { date, id }))
             }
 
-            "heic" | "mov" | "mp4" => {
+            "mov" | "mp4" => {
                 let date = if let Some(date) = extract_media_datetime(path, "-MediaCreateDate")? {
                     date
                 } else {

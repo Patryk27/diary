@@ -173,7 +173,7 @@ impl AddCmd {
                 .find_by_date(file_dt.date())?
                 .into_iter()
                 .any(|entry| {
-                    ["jpg", "png"]
+                    ["jpg", "png", "heic"]
                         .iter()
                         .any(|ext| entry.name.ends_with(&format!(" {}.{}", file_id, ext)))
                 });
@@ -199,20 +199,22 @@ impl AddCmd {
         file_id: Option<&str>,
     ) -> Result<Vec<Step>> {
         let name = Self::get_media_name(file, file_dt, file_id);
-        let mk_dst = |ext: &str| DiaryFileId::new(file_dt.date(), format!("{}.{}", name, ext));
+        let mk = |ext: &str| DiaryFileId::new(file_dt.date(), format!("{}.{}", name, ext));
 
-        let dst = mk_dst("mp4");
-        let dst_heic = mk_dst("heic");
-        let dst_jpg = mk_dst("jpg");
-        let dst_png = mk_dst("png");
+        let dst = mk("mp4");
+        let dst_jpg = mk("jpg");
+        let dst_png = mk("png");
+        let dst_heic = mk("heic");
 
-        if diary.has(&dst)? || diary.has(&dst_heic)? {
+        if diary.has(&dst)? {
             return Ok(vec![Step::skip_or_remove(
                 file.path.clone(),
                 "already in the diary",
                 self.remove,
             )]);
         }
+
+        let has_photo = diary.has(&dst_jpg)? || diary.has(&dst_png)? || diary.has(&dst_heic)?;
 
         let will_have_photo = file_id.is_some()
             && files.iter().any(|src| {
@@ -223,7 +225,7 @@ impl AddCmd {
                 }
             });
 
-        if diary.has(&dst_jpg)? || diary.has(&dst_png)? || will_have_photo {
+        if has_photo || will_have_photo {
             return Ok(vec![Step::skip_or_remove(
                 file.path.clone(),
                 "already in the diary as a photo",
@@ -236,7 +238,7 @@ impl AddCmd {
                 .find_by_date(file_dt.date())?
                 .into_iter()
                 .any(|entry| {
-                    ["mp4", "heic", "jpg", "png"]
+                    ["mp4", "jpg", "png", "heic"]
                         .iter()
                         .any(|ext| entry.name.ends_with(&format!(" {}.{}", file_id, ext)))
                 });
