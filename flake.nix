@@ -32,6 +32,8 @@
   outputs = { self, crane, nixpkgs, rust-overlay, utils }:
     utils.lib.eachDefaultSystem (system:
       let
+        inherit (pkgs) lib stdenv;
+
         pkgs = import nixpkgs {
           inherit system;
 
@@ -44,19 +46,27 @@
           (crane.mkLib pkgs).overrideToolchain
             (pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain);
 
+        deps = with pkgs; [
+          exiftool
+          ffmpeg-full
+        ];
+
         app = crane'.buildPackage {
           src = ./.;
           doCheck = true;
 
-          propagatedBuildInputs = with pkgs; [
-            exiftool
-            ffmpeg-full
-          ];
+          buildInputs = with pkgs; [
+            makeWrapper
+          ] ++ deps;
+
+          postInstall = ''
+            wrapProgram $out/bin/diary \
+              --set PATH ${lib.makeBinPath deps}
+          '';
 
           DISABLED_TESTS =
-            if pkgs.stdenv.isLinux then
-            # TODO non-reproducible
-              "add-video"
+            if stdenv.isLinux then
+              "add-video" # TODO non-reproducible
             else
               "";
         };
