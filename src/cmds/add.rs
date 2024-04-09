@@ -180,17 +180,19 @@ impl AddCmd {
         file_id: Option<&str>,
     ) -> Result<Vec<Step>> {
         let name = Self::get_media_name(file, file_dt, file_id);
-        let dst = DiaryFileId::new(file_dt.date(), format!("{}.mp4", name));
+        let mk_dst = |ext: &str| DiaryFileId::new(file_dt.date(), format!("{}.{}", name, ext));
 
-        if diary.has(&dst)? {
+        let dst = mk_dst("mp4");
+        let dst_jpg = mk_dst("jpg");
+        let dst_heic = mk_dst("heic");
+
+        if diary.has(&dst)? || diary.has(&dst_heic)? {
             return Ok(vec![Step::skip_or_remove(
                 file.path.clone(),
                 "already in the diary",
                 self.remove,
             )]);
         }
-
-        let photo_dst = DiaryFileId::new(file_dt.date(), format!("{}.jpg", name));
 
         let will_have_photo = file_id.is_some()
             && files.iter().any(|src| {
@@ -201,7 +203,7 @@ impl AddCmd {
                 }
             });
 
-        if diary.has(&photo_dst)? || will_have_photo {
+        if diary.has(&dst_jpg)? || will_have_photo {
             return Ok(vec![Step::skip_or_remove(
                 file.path.clone(),
                 "already in the diary as a photo",
