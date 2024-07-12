@@ -48,7 +48,6 @@
 
         deps = with pkgs; [
           exiftool
-          ffmpeg-full
         ];
 
         app = crane'.buildPackage {
@@ -63,8 +62,6 @@
             wrapProgram $out/bin/diary \
               --set PATH ${lib.makeBinPath deps}
           '';
-
-          DISABLED_TESTS = "add-video"; # TODO non-reproducible
         };
 
       in

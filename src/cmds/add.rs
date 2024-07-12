@@ -2,13 +2,12 @@ use crate::utils::{
     DiaryFileId, DiaryRepository, FoundSourceFile, SourceFile, SourceFileType, SourceRepository,
 };
 use crate::Env;
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result};
 use chrono::{NaiveDate, NaiveDateTime, Timelike};
 use clap::Parser;
 use colored::Colorize;
 use itertools::Itertools;
-use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::path::PathBuf;
 use std::{fs, iter};
 
 #[derive(Debug, Parser)]
@@ -252,31 +251,7 @@ impl AddCmd {
             }
         }
 
-        let tmp = Path::new("/tmp/video.mp4");
-
-        let mut steps = vec![
-            Step::Convert {
-                src: file.path.clone(),
-                dst: tmp.to_owned(),
-            },
-            Step::Copy {
-                src: tmp.to_owned(),
-                dst,
-            },
-            Step::Remove {
-                src: tmp.to_owned(),
-                reason: "temporary artifact".into(),
-            },
-        ];
-
-        if self.remove {
-            steps.push(Step::Remove {
-                src: file.path.clone(),
-                reason: "just added into the diary".into(),
-            });
-        }
-
-        Ok(steps)
+        Ok(Step::copy_and_remove(file.path.clone(), dst, self.remove).collect())
     }
 
     fn get_media_name(file: &SourceFile, dt: NaiveDateTime, id: Option<&str>) -> String {
@@ -331,9 +306,6 @@ impl AddCmd {
                 }
                 Step::Remove { src, reason } => {
                     self.execute_remove(ctxt, src, reason)?;
-                }
-                Step::Convert { src, dst } => {
-                    self.execute_convert(ctxt, src, dst)?;
                 }
             }
         }
@@ -415,59 +387,6 @@ impl AddCmd {
         Ok(())
     }
 
-    fn execute_convert(&self, ctxt: ExecutionCtxt, src: PathBuf, dst: PathBuf) -> Result<()> {
-        let action = if self.dry_run {
-            "Would convert"
-        } else {
-            "Converting"
-        };
-
-        writeln!(
-            ctxt.env.stdout,
-            "  {} {} to {} | {}/{}",
-            action.green(),
-            src.display(),
-            dst.display(),
-            ctxt.step_idx + 1,
-            ctxt.step_count,
-        )?;
-
-        if !self.dry_run {
-            let out = Command::new("ffmpeg")
-                .arg("-nostdin")
-                .arg("-i")
-                .arg(src)
-                .arg("-vcodec")
-                .arg("libx265")
-                .arg("-tag:v")
-                .arg("hvc1")
-                .arg(dst)
-                .output()
-                .context("Couldn't spawn ffmpeg")?;
-
-            if !out.status.success() {
-                let stdout = String::from_utf8_lossy(&out.stdout);
-                let stderr = String::from_utf8_lossy(&out.stderr);
-
-                let err = [
-                    "ffmpeg failed:",
-                    "",
-                    "<stdout>",
-                    &stdout,
-                    "</stdout>",
-                    "",
-                    "<stderr>",
-                    &stderr,
-                    "</stderr>",
-                ];
-
-                return Err(anyhow!("{}", err.join("\n")));
-            }
-        }
-
-        Ok(())
-    }
-
     fn summary(&self, env: &mut Env, stats: Stats) -> Result<()> {
         writeln!(env.stdout)?;
         writeln!(env.stdout, "{}", "Summary".green().bold())?;
@@ -511,7 +430,6 @@ enum Step {
     Copy { src: PathBuf, dst: DiaryFileId },
     Skip { src: PathBuf, reason: String },
     Remove { src: PathBuf, reason: String },
-    Convert { src: PathBuf, dst: PathBuf },
 }
 
 impl Step {

@@ -28,8 +28,6 @@ IMG_1236.jpg
 2018/01/03/16-35-00.jpg
 ```
 
-... renaming files and passing videos through ffmpeg to make them lightweight.
-
 Note that this is not meant to be any sort of _general-purpose_ diary manager.
 
 ## License

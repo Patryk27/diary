@@ -3,7 +3,6 @@ use diary::{Cmd, Env};
 use dircpy::copy_dir;
 use glob::glob;
 use pretty_assertions as pa;
-use std::collections::BTreeSet;
 use std::path::Path;
 use std::{env, fs};
 use test_case::test_case;
@@ -21,16 +20,6 @@ use test_case::test_case;
 #[test_case("add-verbose")]
 #[test_case("add-video")]
 fn test(case: &str) {
-    let disabled_tests: BTreeSet<_> = env::var("DISABLED_TESTS")
-        .map(|tests| tests.split(',').map(|test| test.to_owned()).collect())
-        .unwrap_or_default();
-
-    if disabled_tests.contains(case) {
-        return;
-    }
-
-    // ---
-
     colored::control::set_override(false);
     env::set_var("TZ", "UTC");
 
