@@ -151,7 +151,7 @@ impl SourceFileType {
                 Ok(Some(Self::Photo { date, id }))
             }
 
-            "mov" | "mp4" => {
+            "mov" | "mp4" | "webm" => {
                 let date = if let Some(date) = extract_media_datetime(path, "-MediaCreateDate")? {
                     date
                 } else {
