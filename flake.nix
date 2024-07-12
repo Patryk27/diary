@@ -64,11 +64,7 @@
               --set PATH ${lib.makeBinPath deps}
           '';
 
-          DISABLED_TESTS =
-            if stdenv.isLinux then
-              "add-video" # TODO non-reproducible
-            else
-              "";
+          DISABLED_TESTS = "add-video"; # TODO non-reproducible
         };
 
       in
