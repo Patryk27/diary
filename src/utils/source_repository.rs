@@ -2,6 +2,7 @@ use anyhow::{anyhow, Context, Result};
 use chrono::{DateTime, Local, NaiveDate, NaiveDateTime, NaiveTime, TimeZone};
 use glob::glob;
 use itertools::Itertools;
+use std::cmp;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::str::FromStr;
@@ -106,7 +107,15 @@ impl SourceFileType {
     fn new(path: &Path, stem: &str, ext: &str) -> Result<Option<Self>> {
         let created_or_modified_at = || -> Result<_> {
             let metadata = path.metadata()?;
-            let date = metadata.created().or_else(|_| metadata.modified())?;
+
+            let date = match (metadata.created(), metadata.modified()) {
+                (Ok(created_at), Ok(modified_at)) => cmp::min(created_at, modified_at),
+                (Ok(created_at), Err(_)) => created_at,
+                (Err(_), Ok(modified_at)) => modified_at,
+                (Err(_), Err(_)) => {
+                    return Err(anyhow!("Cannot determine file timestamp"));
+                }
+            };
 
             Ok(DateTime::<Local>::from(date).naive_local())
         };
