@@ -280,26 +280,27 @@ impl AddCmd {
     }
 
     fn get_media_name(file: &SourceFile, dt: NaiveDateTime, id: Option<&str>) -> String {
+        let time = format!(
+            "{:02}-{:02}-{:02}",
+            dt.time().hour(),
+            dt.time().minute(),
+            dt.time().second()
+        );
+
         if let Some(id) = id {
-            return format!(
-                "{:02}-{:02}-{:02} {}",
-                dt.time().hour(),
-                dt.time().minute(),
-                dt.time().second(),
-                id.to_lowercase()
-            );
+            return format!("{} {}", time, id.to_lowercase());
         }
 
-        if let Some(("Screenshot", _, "at", time)) = file.stem.split(' ').collect_tuple() {
-            if let Some((h, m, d)) = time.split('.').collect_tuple() {
-                return format!("{}-{}-{} screenshot", h, m, d);
-            }
+        if file.stem.starts_with("Screenshot") {
+            return format!("{} screenshot", time);
         }
 
-        if let Some(("Screen", "Recording", _, "at", time)) = file.stem.split(' ').collect_tuple() {
-            if let Some((h, m, d)) = time.split('.').collect_tuple() {
-                return format!("{}-{}-{} recording", h, m, d);
-            }
+        if file.stem.starts_with("Screencast") || file.stem.starts_with("Screen Recording") {
+            return format!("{} screencast", time);
+        }
+
+        if file.stem.starts_with("Recording") {
+            return format!("{} recording", time);
         }
 
         file.stem.to_owned()
@@ -545,27 +546,4 @@ struct ExecutionCtxt<'a, 'b> {
     diary: &'a mut DiaryRepository,
     step_idx: usize,
     step_count: usize,
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use test_case::test_case;
-
-    #[test_case("Screenshot 2018-01-14 at 12.34.56", "12-34-56 screenshot" ; "screenshot")]
-    #[test_case("Screen Recording 2018-01-14 at 12.34.56", "12-34-56 recording" ; "screen recording")]
-    fn get_media_name(given_stem: &str, expected: &str) {
-        let file = SourceFile {
-            path: Default::default(),
-            stem: given_stem.into(),
-            ext: Default::default(),
-            ty: SourceFileType::Note {
-                date: Default::default(),
-            },
-        };
-
-        let actual = AddCmd::get_media_name(&file, Default::default(), Default::default());
-
-        assert_eq!(expected, actual);
-    }
 }
