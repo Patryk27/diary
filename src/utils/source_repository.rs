@@ -148,28 +148,63 @@ impl SourceFileType {
                 }))
             }
 
-            "jpg" | "png" | "webp" | "heic" => {
-                let date = if let Some(date) = extract_media_datetime(path, "-DateTimeOriginal")? {
+            "jpg" | "png" | "webp" | "heic" | "mov" | "mp4" | "webm" => {
+                enum Kind {
+                    Photo,
+                    Video,
+                }
+
+                let kind = match ext {
+                    "jpg" | "png" | "webp" | "heic" => Kind::Photo,
+                    "mov" | "mp4" | "webm" => Kind::Video,
+                    _ => unreachable!(),
+                };
+
+                let mut date = None;
+                let mut id = None;
+
+                if let Some((new_date, new_time, new_id)) = stem.split('_').collect_tuple() {
+                    let new_date = new_date.split('-').collect_tuple();
+                    let new_time = new_time.split('-').collect_tuple();
+
+                    if let (Some((year, month, day)), Some((hour, min, sec))) = (new_date, new_time)
+                    {
+                        let year = year.parse()?;
+                        let month = month.parse()?;
+                        let day = day.parse()?;
+
+                        let hour = hour.parse()?;
+                        let min = min.parse()?;
+                        let sec = sec.parse()?;
+
+                        date = Some(NaiveDateTime::new(
+                            NaiveDate::from_ymd_opt(year, month, day).unwrap(),
+                            NaiveTime::from_hms_opt(hour, min, sec).unwrap(),
+                        ));
+
+                        id = Some(new_id.to_string());
+                    }
+                }
+
+                let tag = match kind {
+                    Kind::Photo => "-DateTimeOriginal",
+                    Kind::Video => "-MediaCreateDate",
+                };
+
+                let date = if let Some(date) = date {
+                    date
+                } else if let Some(date) = extract_media_datetime(path, tag)? {
                     date
                 } else {
                     created_or_modified_at()?
                 };
 
-                let id = stem.strip_prefix("IMG_").map(|id| id.to_owned());
+                let id = id.or_else(|| stem.strip_prefix("IMG_").map(|id| id.to_owned()));
 
-                Ok(Some(Self::Photo { date, id }))
-            }
-
-            "mov" | "mp4" | "webm" => {
-                let date = if let Some(date) = extract_media_datetime(path, "-MediaCreateDate")? {
-                    date
-                } else {
-                    created_or_modified_at()?
-                };
-
-                let id = stem.strip_prefix("IMG_").map(|id| id.to_owned());
-
-                Ok(Some(Self::Video { date, id }))
+                Ok(Some(match kind {
+                    Kind::Photo => Self::Photo { date, id },
+                    Kind::Video => Self::Video { date, id },
+                }))
             }
 
             _ => Ok(None),

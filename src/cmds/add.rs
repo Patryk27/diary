@@ -263,7 +263,7 @@ impl AddCmd {
         );
 
         if let Some(id) = id {
-            return format!("{} {}", time, id.to_lowercase());
+            return format!("{} {}", time, id);
         }
 
         if file.stem.starts_with("Screenshot") {

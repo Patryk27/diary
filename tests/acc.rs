@@ -19,6 +19,7 @@ use test_case::test_case;
 #[test_case("add-smoke")]
 #[test_case("add-verbose")]
 #[test_case("add-video")]
+#[test_case("add-where-date-is-in-file-name")]
 fn test(case: &str) {
     colored::control::set_override(false);
     env::set_var("TZ", "UTC");
