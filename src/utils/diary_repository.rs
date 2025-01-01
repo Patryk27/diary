@@ -1,5 +1,6 @@
 use anyhow::{anyhow, Context, Result};
 use chrono::{Datelike, NaiveDate};
+use itertools::Itertools;
 use std::path::{Path, PathBuf};
 use std::{fmt, fs};
 
@@ -13,7 +14,7 @@ impl DiaryRepository {
         let dir = dir.as_ref();
 
         if !dir.try_exists()? {
-            return Err(anyhow!("Diary directory not found: {}", dir.display()));
+            return Err(anyhow!("diary directory not found: {}", dir.display()));
         }
 
         Ok(Self {
@@ -39,7 +40,7 @@ impl DiaryRepository {
 
         if dst_path.try_exists()? {
             return Err(anyhow!(
-                "Cannot add `{}` into diary, because it would overwrite `{}`",
+                "cannot add `{}` into diary, because it would overwrite `{}`",
                 src.display(),
                 dst,
             ));
@@ -47,12 +48,12 @@ impl DiaryRepository {
 
         if !dir.try_exists()? {
             fs::create_dir_all(&dir)
-                .with_context(|| format!("Couldn't create directory: {}", dir.display()))?;
+                .with_context(|| format!("couldn't create directory: {}", dir.display()))?;
         }
 
         fs::copy(src, &dst_path).with_context(|| {
             format!(
-                "Couldn't copy `{}` to `{}`",
+                "couldn't copy `{}` to `{}`",
                 src.display(),
                 dst_path.display()
             )
@@ -77,20 +78,18 @@ impl DiaryRepository {
                 let entry = entry?;
 
                 if entry.file_type()?.is_dir() {
-                    return Err(anyhow!(
-                        "Found an unexpected directory: {}",
-                        entry.path().display()
-                    ));
+                    return Ok(None);
                 }
 
                 let name = entry
                     .file_name()
                     .to_str()
-                    .context("File has non-Unicode name")?
+                    .context("file has non-unicode name")?
                     .to_owned();
 
-                Ok(DiaryFileId { date, name })
+                Ok(Some(DiaryFileId { date, name }))
             })
+            .flatten_ok()
             .collect()
     }
 }

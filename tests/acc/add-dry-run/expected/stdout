@@ -1,15 +1,17 @@
-Scanning
+--dry-run is active
 
-Processing
+scanning
 
-Executing
-  Would copy source/2018-01-01.org to diary:2018/01/01/index.org | 1/7
-  Would copy source/2018-01-02.org to diary:2018/01/02/index.org | 2/7
-  Would copy source/2018-01-03.org to diary:2018/01/03/index.org | 3/7
-  Would copy source/image-a.jpg to diary:2018/01/02/image-a.jpg | 4/7
-  Would copy source/image-b.jpg to diary:2018/01/03/image-b.jpg | 5/7
-  Would copy source/image-c.jpg to diary:2018/01/04/image-c.jpg | 6/7
-  Would copy source/video.mp4 to diary:2018/01/02/video.mp4 | 7/7
+planning
 
-Summary
-  Would copy 7 files
+executing
+  1/7: copying `source/2018-01-01.org` to `diary:2018/01/01/index.org`
+  2/7: copying `source/2018-01-02.org` to `diary:2018/01/02/index.org`
+  3/7: copying `source/2018-01-03.org` to `diary:2018/01/03/index.org`
+  4/7: copying `source/image-a.jpg` to `diary:2018/01/02/image-a.jpg`
+  5/7: copying `source/image-b.jpg` to `diary:2018/01/03/image-b.jpg`
+  6/7: copying `source/image-c.jpg` to `diary:2018/01/04/image-c.jpg`
+  7/7: copying `source/video.mp4` to `diary:2018/01/02/video.mp4`
+
+summary
+  copied 7 files

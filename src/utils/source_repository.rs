@@ -17,7 +17,7 @@ impl SourceRepository {
         let dir = dir.as_ref();
 
         if !dir.try_exists()? {
-            return Err(anyhow!("Source directory not found: {}", dir.display()));
+            return Err(anyhow!("source directory not found: {}", dir.display()));
         }
 
         Ok(Self {
@@ -42,12 +42,12 @@ impl SourceRepository {
                 let file: Result<_> = try {
                     let stem = stem
                         .to_str()
-                        .context("File has non-Unicode stem")?
+                        .context("file has non-unicode stem")?
                         .to_owned();
 
                     let ext = ext
                         .to_str()
-                        .context("File has non-Unicode extension")?
+                        .context("file has non-unicode extension")?
                         .to_lowercase();
 
                     let ty = SourceFileType::new(&path, &stem, &ext)?;
@@ -61,7 +61,7 @@ impl SourceRepository {
                 };
 
                 let file =
-                    file.with_context(|| format!("Couldn't identify file: {}", path.display()))?;
+                    file.with_context(|| format!("couldn't identify file: {}", path.display()))?;
 
                 if let Some(file) = file {
                     Ok(FoundSourceFile::Recognized(file))
@@ -113,7 +113,7 @@ impl SourceFileType {
                 (Ok(created_at), Err(_)) => created_at,
                 (Err(_), Ok(modified_at)) => modified_at,
                 (Err(_), Err(_)) => {
-                    return Err(anyhow!("Cannot determine file timestamp"));
+                    return Err(anyhow!("cannot determine file timestamp"));
                 }
             };
 
@@ -126,25 +126,25 @@ impl SourceFileType {
 
                 let year = stem
                     .next()
-                    .context("Invalid name: missing year")?
+                    .context("invalid name: missing year")?
                     .parse()
-                    .context("Invalid name: invalid year")?;
+                    .context("invalid name: invalid year")?;
 
                 let month = stem
                     .next()
-                    .context("Invalid name: missing month")?
+                    .context("invalid name: missing month")?
                     .parse()
-                    .context("Invalid name: invalid month")?;
+                    .context("invalid name: invalid month")?;
 
                 let day = stem
                     .next()
-                    .context("Invalid name: missing day")?
+                    .context("invalid name: missing day")?
                     .parse()
-                    .context("Invalid name: invalid day")?;
+                    .context("invalid name: invalid day")?;
 
                 Ok(Some(Self::Note {
                     date: NaiveDate::from_ymd_opt(year, month, day)
-                        .context("Invalid name: invalid date")?,
+                        .context("invalid name: invalid date")?,
                 }))
             }
 
@@ -226,7 +226,7 @@ fn extract_media_datetime(path: &Path, tag: &str) -> Result<Option<NaiveDateTime
         .arg(tag)
         .arg(path)
         .output()
-        .context("Couldn't launch exiftool")?
+        .context("couldn't launch exiftool")?
         .stdout;
 
     let out = String::from_utf8_lossy(&out);
@@ -237,7 +237,7 @@ fn extract_media_datetime(path: &Path, tag: &str) -> Result<Option<NaiveDateTime
     } else {
         parse_exiftool_date(out)
             .map(Some)
-            .with_context(|| format!("Couldn't parse exiftool's response: {}", out))
+            .with_context(|| format!("couldn't parse exiftool's response: {}", out))
     }
 }
 

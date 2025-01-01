@@ -1,17 +1,17 @@
-Scanning
+scanning
 
-Processing
+planning
 
-Executing
-  Copying source/2018-01-02.org to diary:2018/01/02/index.org | 1/8
-  Removing source/2018-01-02.org (just added into the diary) | 2/8
-  Copying source/2018-01-03.org to diary:2018/01/03/index.org | 3/8
-  Removing source/2018-01-03.org (just added into the diary) | 4/8
-  Copying source/image-a.jpg to diary:2018/01/02/image-a.jpg | 5/8
-  Removing source/image-a.jpg (just added into the diary) | 6/8
-  Copying source/image-b.jpg to diary:2018/01/03/image-b.jpg | 7/8
-  Removing source/image-b.jpg (just added into the diary) | 8/8
+executing
+  1/8: copying `source/2018-01-02.org` to `diary:2018/01/02/index.org`
+  2/8: removing `source/2018-01-02.org` (just added into the diary)
+  3/8: copying `source/2018-01-03.org` to `diary:2018/01/03/index.org`
+  4/8: removing `source/2018-01-03.org` (just added into the diary)
+  5/8: copying `source/image-a.jpg` to `diary:2018/01/02/image-a.jpg`
+  6/8: removing `source/image-a.jpg` (just added into the diary)
+  7/8: copying `source/image-b.jpg` to `diary:2018/01/03/image-b.jpg`
+  8/8: removing `source/image-b.jpg` (just added into the diary)
 
-Summary
-  Copied 4 files
-  Removed 4 files
+summary
+  copied 4 files
+  removed 4 files

@@ -42,9 +42,14 @@ pub struct AddCmd {
 
 impl AddCmd {
     pub fn run(self, env: &mut Env) -> Result<()> {
+        if self.dry_run {
+            writeln!(env.stdout, "{} is active", "--dry-run".yellow())?;
+            writeln!(env.stdout)?;
+        }
+
         let srcs = self.scan(env)?;
-        let plan = self.process(env, &srcs)?;
-        let stats = self.execute(env, plan)?;
+        let plan = self.plan(env, &srcs)?;
+        let stats = self.exec(env, plan)?;
 
         self.summary(env, stats)?;
 
@@ -52,7 +57,7 @@ impl AddCmd {
     }
 
     fn scan(&self, env: &mut Env) -> Result<Vec<SourceFile>> {
-        writeln!(env.stdout, "{}", "Scanning".green().bold())?;
+        writeln!(env.stdout, "{}", "scanning".green().bold())?;
 
         let source = SourceRepository::new(&self.source)?;
 
@@ -61,7 +66,7 @@ impl AddCmd {
             .map(|file| match file? {
                 FoundSourceFile::Recognized(file) => {
                     if self.verbose {
-                        writeln!(env.stdout, "  {} {}", "Found".green(), file.path.display())?;
+                        writeln!(env.stdout, "  {} {}", "found".green(), file.path.display())?;
                     }
 
                     Ok(Some(file))
@@ -70,8 +75,8 @@ impl AddCmd {
                 FoundSourceFile::Unrecognized(path) => {
                     writeln!(
                         env.stdout,
-                        "! {} {}: unrecognized",
-                        "Warn".yellow(),
+                        "{} {}: unrecognized",
+                        "warn".yellow(),
                         path.display()
                     )?;
 
@@ -97,22 +102,22 @@ impl AddCmd {
         Ok(files)
     }
 
-    fn process(&self, env: &mut Env, files: &[SourceFile]) -> Result<Plan> {
-        writeln!(env.stdout, "{}", "Processing".green().bold())?;
+    fn plan(&self, env: &mut Env, files: &[SourceFile]) -> Result<Plan> {
+        writeln!(env.stdout, "{}", "planning".green().bold())?;
 
         let mut plan = Plan::default();
         let diary = DiaryRepository::new(&self.diary)?;
 
         for file in files {
             let steps = match &file.ty {
-                SourceFileType::Note { date } => self.process_note(&diary, file, *date)?,
+                SourceFileType::Note { date } => self.plan_note(&diary, file, *date)?,
 
                 SourceFileType::Photo { date, id } => {
-                    self.process_photo(&diary, file, *date, id.as_deref())?
+                    self.plan_photo(&diary, file, *date, id.as_deref())?
                 }
 
                 SourceFileType::Video { date, id } => {
-                    self.process_video(&diary, files, file, *date, id.as_deref())?
+                    self.plan_video(&diary, files, file, *date, id.as_deref())?
                 }
             };
 
@@ -124,7 +129,7 @@ impl AddCmd {
         Ok(plan)
     }
 
-    fn process_note(
+    fn plan_note(
         &self,
         diary: &DiaryRepository,
         file: &SourceFile,
@@ -143,7 +148,7 @@ impl AddCmd {
         }
     }
 
-    fn process_photo(
+    fn plan_photo(
         &self,
         diary: &DiaryRepository,
         file: &SourceFile,
@@ -189,7 +194,7 @@ impl AddCmd {
         Ok(Step::copy_and_remove(file.path.clone(), dst, self.remove).collect())
     }
 
-    fn process_video(
+    fn plan_video(
         &self,
         diary: &DiaryRepository,
         files: &[SourceFile],
@@ -245,7 +250,7 @@ impl AddCmd {
             if already_exists {
                 return Ok(vec![Step::skip_or_remove(
                     file.path.clone(),
-                    "already in the diary - under a different timestamp, though!",
+                    "already in the diary under a different timestamp",
                     self.remove,
                 )]);
             }
@@ -281,15 +286,15 @@ impl AddCmd {
         file.stem.to_owned()
     }
 
-    fn execute(&self, env: &mut Env, plan: Plan) -> Result<Stats> {
-        writeln!(env.stdout, "{}", "Executing".green().bold())?;
+    fn exec(&self, env: &mut Env, plan: Plan) -> Result<Stats> {
+        writeln!(env.stdout, "{}", "executing".green().bold())?;
 
         let mut diary = DiaryRepository::new(&self.diary)?;
         let mut stats = Stats::default();
         let step_count = plan.steps.len();
 
         for (step_idx, step) in plan.steps.into_iter().enumerate() {
-            let ctxt = ExecutionCtxt {
+            let ctxt = ExecCtxt {
                 env,
                 stats: &mut stats,
                 diary: &mut diary,
@@ -299,13 +304,13 @@ impl AddCmd {
 
             match step {
                 Step::Copy { src, dst } => {
-                    self.execute_copy(ctxt, src, dst)?;
+                    self.exec_copy(ctxt, src, dst)?;
                 }
                 Step::Skip { src, reason } => {
-                    self.execute_skip(ctxt, src, reason)?;
+                    self.exec_skip(ctxt, src, reason)?;
                 }
                 Step::Remove { src, reason } => {
-                    self.execute_remove(ctxt, src, reason)?;
+                    self.exec_remove(ctxt, src, reason)?;
                 }
             }
         }
@@ -313,21 +318,15 @@ impl AddCmd {
         Ok(stats)
     }
 
-    fn execute_copy(&self, ctxt: ExecutionCtxt, src: PathBuf, dst: DiaryFileId) -> Result<()> {
-        let action = if self.dry_run {
-            "Would copy"
-        } else {
-            "Copying"
-        };
-
+    fn exec_copy(&self, ctxt: ExecCtxt, src: PathBuf, dst: DiaryFileId) -> Result<()> {
         writeln!(
             ctxt.env.stdout,
-            "  {} {} to {} | {}/{}",
-            action.green(),
-            src.display(),
-            dst,
+            "  {}/{}: {} `{}` to `{}`",
             ctxt.step_idx + 1,
             ctxt.step_count,
+            "copying".green(),
+            src.display(),
+            dst,
         )?;
 
         if !self.dry_run {
@@ -339,21 +338,15 @@ impl AddCmd {
         Ok(())
     }
 
-    fn execute_skip(&self, ctxt: ExecutionCtxt, src: PathBuf, reason: String) -> Result<()> {
-        let action = if self.dry_run {
-            "Would skip"
-        } else {
-            "Skipping"
-        };
-
+    fn exec_skip(&self, ctxt: ExecCtxt, src: PathBuf, reason: String) -> Result<()> {
         writeln!(
             ctxt.env.stdout,
-            "  {} {} ({}) | {}/{}",
-            action.green(),
-            src.display(),
-            reason,
+            "  {}/{}: {} `{}` ({})",
             ctxt.step_idx + 1,
             ctxt.step_count,
+            "skipping".green(),
+            src.display(),
+            reason,
         )?;
 
         ctxt.stats.skipped += 1;
@@ -361,25 +354,19 @@ impl AddCmd {
         Ok(())
     }
 
-    fn execute_remove(&self, ctxt: ExecutionCtxt, src: PathBuf, reason: String) -> Result<()> {
-        let action = if self.dry_run {
-            "Would remove"
-        } else {
-            "Removing"
-        };
-
+    fn exec_remove(&self, ctxt: ExecCtxt, src: PathBuf, reason: String) -> Result<()> {
         writeln!(
             ctxt.env.stdout,
-            "  {} {} ({}) | {}/{}",
-            action.green(),
-            src.display(),
-            reason,
+            "  {}/{}: {} `{}` ({})",
             ctxt.step_idx + 1,
             ctxt.step_count,
+            "removing".green(),
+            src.display(),
+            reason,
         )?;
 
         if !self.dry_run {
-            fs::remove_file(&src).with_context(|| format!("Couldn't remove: {}", src.display()))?;
+            fs::remove_file(&src).with_context(|| format!("couldn't remove: {}", src.display()))?;
         }
 
         ctxt.stats.removed += 1;
@@ -389,14 +376,14 @@ impl AddCmd {
 
     fn summary(&self, env: &mut Env, stats: Stats) -> Result<()> {
         writeln!(env.stdout)?;
-        writeln!(env.stdout, "{}", "Summary".green().bold())?;
+        writeln!(env.stdout, "{}", "summary".green().bold())?;
 
-        let mut print_files_stats = |files: usize, verb: &str, verb_dry_run: &str| -> Result<()> {
+        let mut print_files_stats = |files: usize, verb: &str| -> Result<()> {
             if files > 0 {
                 writeln!(
                     env.stdout,
                     "  {} {} file{}",
-                    if self.dry_run { verb_dry_run } else { verb },
+                    verb,
                     files,
                     if files > 1 { "s" } else { "" },
                 )?;
@@ -405,9 +392,9 @@ impl AddCmd {
             Ok(())
         };
 
-        print_files_stats(stats.skipped, "Skipped", "Would skip")?;
-        print_files_stats(stats.copied, "Copied", "Would copy")?;
-        print_files_stats(stats.removed, "Removed", "Would remove")?;
+        print_files_stats(stats.skipped, "skipped")?;
+        print_files_stats(stats.copied, "copied")?;
+        print_files_stats(stats.removed, "removed")?;
 
         Ok(())
     }
@@ -458,7 +445,7 @@ impl Step {
     }
 }
 
-struct ExecutionCtxt<'a, 'b> {
+struct ExecCtxt<'a, 'b> {
     env: &'a mut Env<'b>,
     stats: &'a mut Stats,
     diary: &'a mut DiaryRepository,

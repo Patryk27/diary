@@ -1,21 +1,21 @@
-Scanning
+scanning
 
-Processing
+planning
 
-Executing
-  Copying source/2018-01-01.org to diary:2018/01/01/index.org | 1/12
-  Removing source/2018-01-01.org (just added into the diary) | 2/12
-  Copying source/2018-01-02.org to diary:2018/01/02/index.org | 3/12
-  Removing source/2018-01-02.org (just added into the diary) | 4/12
-  Copying source/2018-01-03.org to diary:2018/01/03/index.org | 5/12
-  Removing source/2018-01-03.org (just added into the diary) | 6/12
-  Copying source/image-a.jpg to diary:2018/01/02/image-a.jpg | 7/12
-  Removing source/image-a.jpg (just added into the diary) | 8/12
-  Copying source/image-b.jpg to diary:2018/01/03/image-b.jpg | 9/12
-  Removing source/image-b.jpg (just added into the diary) | 10/12
-  Copying source/image-c.jpg to diary:2018/01/04/image-c.jpg | 11/12
-  Removing source/image-c.jpg (just added into the diary) | 12/12
+executing
+  1/12: copying `source/2018-01-01.org` to `diary:2018/01/01/index.org`
+  2/12: removing `source/2018-01-01.org` (just added into the diary)
+  3/12: copying `source/2018-01-02.org` to `diary:2018/01/02/index.org`
+  4/12: removing `source/2018-01-02.org` (just added into the diary)
+  5/12: copying `source/2018-01-03.org` to `diary:2018/01/03/index.org`
+  6/12: removing `source/2018-01-03.org` (just added into the diary)
+  7/12: copying `source/image-a.jpg` to `diary:2018/01/02/image-a.jpg`
+  8/12: removing `source/image-a.jpg` (just added into the diary)
+  9/12: copying `source/image-b.jpg` to `diary:2018/01/03/image-b.jpg`
+  10/12: removing `source/image-b.jpg` (just added into the diary)
+  11/12: copying `source/image-c.jpg` to `diary:2018/01/04/image-c.jpg`
+  12/12: removing `source/image-c.jpg` (just added into the diary)
 
-Summary
-  Copied 6 files
-  Removed 6 files
+summary
+  copied 6 files
+  removed 6 files
