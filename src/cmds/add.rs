@@ -185,7 +185,7 @@ impl AddCmd {
             if already_exists {
                 return Ok(vec![Step::skip_or_remove(
                     file.path.clone(),
-                    "already in the diary - under a different timestamp, though!",
+                    "already in the diary under a different timestamp",
                     self.remove,
                 )]);
             }
