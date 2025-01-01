@@ -82,9 +82,9 @@ impl AddCmd {
             .filter_ok(|file| {
                 let date = file.ty.date();
 
-                let on = self.on.map_or(true, |on| date == on);
-                let from = self.from.map_or(true, |from| date >= from);
-                let to = self.to.map_or(true, |to| date <= to);
+                let on = self.on.is_none_or(|on| date == on);
+                let from = self.from.is_none_or(|from| date >= from);
+                let to = self.to.is_none_or(|to| date <= to);
 
                 on && from && to
             })

@@ -2,16 +2,10 @@
   inputs = {
     crane = {
       url = "github:ipetkov/crane";
-
-      inputs = {
-        nixpkgs = {
-          follows = "nixpkgs";
-        };
-      };
     };
 
     nixpkgs = {
-      url = "github:nixos/nixpkgs";
+      url = "github:nixos/nixpkgs/nixos-unstable";
     };
 
     rust-overlay = {
@@ -29,10 +23,18 @@
     };
   };
 
-  outputs = { self, crane, nixpkgs, rust-overlay, utils }:
-    utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      crane,
+      nixpkgs,
+      rust-overlay,
+      utils,
+    }:
+    utils.lib.eachDefaultSystem (
+      system:
       let
-        inherit (pkgs) lib stdenv;
+        inherit (pkgs) lib;
 
         pkgs = import nixpkgs {
           inherit system;
@@ -42,9 +44,9 @@
           ];
         };
 
-        crane' =
-          (crane.mkLib pkgs).overrideToolchain
-            (pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain);
+        crane' = (crane.mkLib pkgs).overrideToolchain (
+          pkgs.rust-bin.fromRustupToolchainFile ./rust-toolchain
+        );
 
         deps = with pkgs; [
           exiftool
@@ -54,9 +56,12 @@
           src = ./.;
           doCheck = true;
 
-          buildInputs = with pkgs; [
-            makeWrapper
-          ] ++ deps;
+          buildInputs =
+            with pkgs;
+            [
+              makeWrapper
+            ]
+            ++ deps;
 
           postInstall = ''
             wrapProgram $out/bin/diary \
