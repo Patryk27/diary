@@ -148,14 +148,14 @@ impl SourceFileType {
                 }))
             }
 
-            "jpg" | "png" | "webp" | "heic" | "mov" | "mp4" | "webm" => {
+            "arw" | "jpg" | "png" | "webp" | "heic" | "mov" | "mp4" | "webm" => {
                 enum Kind {
                     Photo,
                     Video,
                 }
 
                 let kind = match ext {
-                    "jpg" | "png" | "webp" | "heic" => Kind::Photo,
+                    "arw" | "jpg" | "png" | "webp" | "heic" => Kind::Photo,
                     "mov" | "mp4" | "webm" => Kind::Video,
                     _ => unreachable!(),
                 };
