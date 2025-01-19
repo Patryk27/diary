@@ -172,25 +172,6 @@ impl AddCmd {
             )]);
         }
 
-        if let Some(file_id) = file_id {
-            let already_exists = diary
-                .find_by_date(file_dt.date())?
-                .into_iter()
-                .any(|entry| {
-                    ["jpg", "png", "heic"]
-                        .iter()
-                        .any(|ext| entry.name.ends_with(&format!(" {}.{}", file_id, ext)))
-                });
-
-            if already_exists {
-                return Ok(vec![Step::skip_or_remove(
-                    file.path.clone(),
-                    "already in the diary under a different timestamp",
-                    self.remove,
-                )]);
-            }
-        }
-
         Ok(Step::copy_and_remove(file.path.clone(), dst, self.remove).collect())
     }
 
@@ -235,25 +216,6 @@ impl AddCmd {
                 "already in the diary as a photo",
                 self.remove,
             )]);
-        }
-
-        if let Some(file_id) = file_id {
-            let already_exists = diary
-                .find_by_date(file_dt.date())?
-                .into_iter()
-                .any(|entry| {
-                    ["mp4", "jpg", "png", "heic"]
-                        .iter()
-                        .any(|ext| entry.name.ends_with(&format!(" {}.{}", file_id, ext)))
-                });
-
-            if already_exists {
-                return Ok(vec![Step::skip_or_remove(
-                    file.path.clone(),
-                    "already in the diary under a different timestamp",
-                    self.remove,
-                )]);
-            }
         }
 
         Ok(Step::copy_and_remove(file.path.clone(), dst, self.remove).collect())

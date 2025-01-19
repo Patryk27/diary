@@ -1,6 +1,5 @@
 use anyhow::{anyhow, Context, Result};
 use chrono::{Datelike, NaiveDate};
-use itertools::Itertools;
 use std::path::{Path, PathBuf};
 use std::{fmt, fs};
 
@@ -64,33 +63,6 @@ impl DiaryRepository {
 
     pub fn has(&self, id: &DiaryFileId) -> Result<bool> {
         Ok(self.file(id).try_exists()?)
-    }
-
-    pub fn find_by_date(&self, date: NaiveDate) -> Result<Vec<DiaryFileId>> {
-        let dir = self.dir(date);
-
-        if !dir.try_exists()? {
-            return Ok(Default::default());
-        }
-
-        fs::read_dir(&dir)?
-            .map(|entry| {
-                let entry = entry?;
-
-                if entry.file_type()?.is_dir() {
-                    return Ok(None);
-                }
-
-                let name = entry
-                    .file_name()
-                    .to_str()
-                    .context("file has non-unicode name")?
-                    .to_owned();
-
-                Ok(Some(DiaryFileId { date, name }))
-            })
-            .flatten_ok()
-            .collect()
     }
 }
 
