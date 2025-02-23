@@ -108,7 +108,18 @@ impl AddCmd {
         let mut plan = Plan::default();
         let diary = DiaryRepository::new(&self.diary)?;
 
-        for file in files {
+        for (idx, file) in files.iter().enumerate() {
+            if self.verbose {
+                writeln!(
+                    env.stdout,
+                    "  {}/{}: {} {}",
+                    idx + 1,
+                    files.len(),
+                    "planning".green(),
+                    file.path.display(),
+                )?;
+            }
+
             let steps = match &file.ty {
                 SourceFileType::Note { date } => self.plan_note(&diary, file, *date)?,
 

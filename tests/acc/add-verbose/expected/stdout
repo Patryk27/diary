@@ -7,6 +7,12 @@ scanning
   found source/image-c.jpg
 
 planning
+  1/6: planning source/2018-01-01.org
+  2/6: planning source/2018-01-02.org
+  3/6: planning source/2018-01-03.org
+  4/6: planning source/image-a.jpg
+  5/6: planning source/image-b.jpg
+  6/6: planning source/image-c.jpg
 
 executing
   1/6: copying `source/2018-01-01.org` to `diary:2018/01/01/index.org`
