@@ -21,21 +21,21 @@ impl DiaryRepository {
         })
     }
 
-    pub fn dir(&self, date: NaiveDate) -> PathBuf {
+    fn dir(&self, date: NaiveDate) -> PathBuf {
         self.dir
             .join(format!("{:04}", date.year()))
             .join(format!("{:02}", date.month()))
             .join(format!("{:02}", date.day()))
     }
 
-    pub fn file(&self, id: &DiaryFileId) -> PathBuf {
-        self.dir(id.date).join(&id.name)
+    fn resolve(&self, path: &DiaryPath) -> PathBuf {
+        self.dir(path.date).join(&path.file)
     }
 
-    pub fn add(&mut self, src: impl AsRef<Path>, dst: &DiaryFileId) -> Result<()> {
+    pub fn add(&mut self, src: impl AsRef<Path>, dst: &DiaryPath) -> Result<()> {
         let src = src.as_ref();
         let dir = self.dir(dst.date);
-        let dst_path = self.file(dst);
+        let dst_path = self.resolve(dst);
 
         if dst_path.try_exists()? {
             return Err(anyhow!(
@@ -61,27 +61,27 @@ impl DiaryRepository {
         Ok(())
     }
 
-    pub fn has(&self, id: &DiaryFileId) -> Result<bool> {
-        Ok(self.file(id).try_exists()?)
+    pub fn has(&self, path: &DiaryPath) -> Result<bool> {
+        Ok(self.resolve(path).try_exists()?)
     }
 }
 
 #[derive(Debug)]
-pub struct DiaryFileId {
+pub struct DiaryPath {
     pub date: NaiveDate,
-    pub name: String,
+    pub file: String,
 }
 
-impl DiaryFileId {
-    pub fn new(date: NaiveDate, name: impl AsRef<str>) -> Self {
+impl DiaryPath {
+    pub fn new(date: NaiveDate, file: impl AsRef<str>) -> Self {
         Self {
             date,
-            name: name.as_ref().to_string(),
+            file: file.as_ref().to_string(),
         }
     }
 }
 
-impl fmt::Display for DiaryFileId {
+impl fmt::Display for DiaryPath {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -89,7 +89,7 @@ impl fmt::Display for DiaryFileId {
             self.date.year(),
             self.date.month(),
             self.date.day(),
-            self.name
+            self.file,
         )
     }
 }

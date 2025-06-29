@@ -7,8 +7,6 @@ use std::path::Path;
 use std::{env, fs};
 use test_case::test_case;
 
-#[test_case("add-complementary-video-1")]
-#[test_case("add-complementary-video-2")]
 #[test_case("add-dry-run")]
 #[test_case("add-filter-from")]
 #[test_case("add-filter-from-to")]

@@ -1,5 +1,5 @@
 use crate::utils::{
-    DiaryFileId, DiaryRepository, FoundSourceFile, SourceFile, SourceFileType, SourceRepository,
+    DiaryPath, DiaryRepository, FoundSourceFile, SourceFile, SourceFileType, SourceRepository,
 };
 use crate::Env;
 use anyhow::{Context, Result};
@@ -106,13 +106,8 @@ impl AddCmd {
         for file in files {
             let steps = match &file.ty {
                 SourceFileType::Note { date } => self.plan_note(&diary, file, *date)?,
-
-                SourceFileType::Photo { date, id } => {
-                    self.plan_photo(&diary, file, *date, id.as_deref())?
-                }
-
-                SourceFileType::Video { date, id } => {
-                    self.plan_video(&diary, files, file, *date, id.as_deref())?
+                SourceFileType::Photo { date, id } | SourceFileType::Video { date, id } => {
+                    self.plan_media(&diary, file, *date, id.as_deref())?
                 }
             };
 
@@ -130,7 +125,7 @@ impl AddCmd {
         file: &SourceFile,
         file_dt: NaiveDate,
     ) -> Result<Vec<Step>> {
-        let dst = DiaryFileId::new(file_dt, "index.org");
+        let dst = DiaryPath::new(file_dt, "index.org");
 
         if diary.has(&dst)? {
             Ok(vec![Step::skip_or_remove(
@@ -143,14 +138,14 @@ impl AddCmd {
         }
     }
 
-    fn plan_photo(
+    fn plan_media(
         &self,
         diary: &DiaryRepository,
         file: &SourceFile,
         file_dt: NaiveDateTime,
         file_id: Option<&str>,
     ) -> Result<Vec<Step>> {
-        let dst = DiaryFileId::new(
+        let dst = DiaryPath::new(
             file_dt.date(),
             format!(
                 "{}.{}",
@@ -160,60 +155,14 @@ impl AddCmd {
         );
 
         if diary.has(&dst)? {
-            return Ok(vec![Step::skip_or_remove(
+            Ok(vec![Step::skip_or_remove(
                 file.path.clone(),
                 "already in the diary",
                 self.remove,
-            )]);
+            )])
+        } else {
+            Ok(Step::copy_and_remove(file.path.clone(), dst, self.remove).collect())
         }
-
-        Ok(Step::copy_and_remove(file.path.clone(), dst, self.remove).collect())
-    }
-
-    fn plan_video(
-        &self,
-        diary: &DiaryRepository,
-        files: &[SourceFile],
-        file: &SourceFile,
-        file_dt: NaiveDateTime,
-        file_id: Option<&str>,
-    ) -> Result<Vec<Step>> {
-        let name = Self::get_media_name(file, file_dt, file_id);
-        let mk = |ext: &str| DiaryFileId::new(file_dt.date(), format!("{}.{}", name, ext));
-
-        let dst = mk("mp4");
-        let dst_jpg = mk("jpg");
-        let dst_png = mk("png");
-        let dst_heic = mk("heic");
-
-        if diary.has(&dst)? {
-            return Ok(vec![Step::skip_or_remove(
-                file.path.clone(),
-                "already in the diary",
-                self.remove,
-            )]);
-        }
-
-        let has_photo = diary.has(&dst_jpg)? || diary.has(&dst_png)? || diary.has(&dst_heic)?;
-
-        let will_have_photo = file_id.is_some()
-            && files.iter().any(|src| {
-                if let SourceFileType::Photo { id: id2, .. } = &src.ty {
-                    file_id == id2.as_deref()
-                } else {
-                    false
-                }
-            });
-
-        if has_photo || will_have_photo {
-            return Ok(vec![Step::skip_or_remove(
-                file.path.clone(),
-                "already in the diary as a photo",
-                self.remove,
-            )]);
-        }
-
-        Ok(Step::copy_and_remove(file.path.clone(), dst, self.remove).collect())
     }
 
     fn get_media_name(file: &SourceFile, dt: NaiveDateTime, id: Option<&str>) -> String {
@@ -221,21 +170,18 @@ impl AddCmd {
             "{:02}-{:02}-{:02}",
             dt.time().hour(),
             dt.time().minute(),
-            dt.time().second()
+            dt.time().second(),
         );
 
         if let Some(id) = id {
             return format!("{} {}", time, id);
         }
-
         if file.stem.starts_with("Screenshot") {
             return format!("{} screenshot", time);
         }
-
         if file.stem.starts_with("Screencast") || file.stem.starts_with("Screen Recording") {
             return format!("{} screencast", time);
         }
-
         if file.stem.starts_with("Recording") {
             return format!("{} recording", time);
         }
@@ -275,7 +221,7 @@ impl AddCmd {
         Ok(stats)
     }
 
-    fn exec_copy(&self, ctxt: ExecCtxt, src: PathBuf, dst: DiaryFileId) -> Result<()> {
+    fn exec_copy(&self, ctxt: ExecCtxt, src: PathBuf, dst: DiaryPath) -> Result<()> {
         writeln!(
             ctxt.env.stdout,
             "  {} `{}` to `{}` [{}/{}]",
@@ -371,13 +317,13 @@ struct Plan {
 
 #[derive(Debug)]
 enum Step {
-    Copy { src: PathBuf, dst: DiaryFileId },
+    Copy { src: PathBuf, dst: DiaryPath },
     Skip { src: PathBuf, reason: String },
     Remove { src: PathBuf, reason: String },
 }
 
 impl Step {
-    fn copy_and_remove(src: PathBuf, dst: DiaryFileId, remove: bool) -> impl Iterator<Item = Self> {
+    fn copy_and_remove(src: PathBuf, dst: DiaryPath, remove: bool) -> impl Iterator<Item = Self> {
         let add = Step::Copy {
             src: src.clone(),
             dst,
