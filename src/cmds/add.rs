@@ -50,6 +50,11 @@ impl AddCmd {
 
         self.summary(env, stats)?;
 
+        if self.dry_run {
+            writeln!(env.stdout)?;
+            writeln!(env.stdout, "{} is active", "--dry-run".yellow())?;
+        }
+
         Ok(())
     }
 
