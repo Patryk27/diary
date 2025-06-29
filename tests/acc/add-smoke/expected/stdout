@@ -3,12 +3,12 @@ scanning
 planning
 
 executing
-  1/6: skipping `source/2018-01-01.org` (already in the diary)
-  2/6: skipping `source/2018-01-02.org` (already in the diary)
-  3/6: copying `source/2018-01-03.org` to `diary:2018/01/03/index.org`
-  4/6: skipping `source/image-a.jpg` (already in the diary)
-  5/6: copying `source/image-b.jpg` to `diary:2018/01/03/image-b.jpg`
-  6/6: skipping `source/image-c.jpg` (already in the diary)
+  skipping `source/2018-01-01.org` (already in the diary) [1/6]
+  skipping `source/2018-01-02.org` (already in the diary) [2/6]
+  copying `source/2018-01-03.org` to `diary:2018/01/03/index.org` [3/6]
+  skipping `source/image-a.jpg` (already in the diary) [4/6]
+  copying `source/image-b.jpg` to `diary:2018/01/03/image-b.jpg` [5/6]
+  skipping `source/image-c.jpg` (already in the diary) [6/6]
 
 summary
   skipped 4 files

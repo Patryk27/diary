@@ -108,18 +108,7 @@ impl AddCmd {
         let mut plan = Plan::default();
         let diary = DiaryRepository::new(&self.diary)?;
 
-        for (idx, file) in files.iter().enumerate() {
-            if self.verbose {
-                writeln!(
-                    env.stdout,
-                    "  {}/{}: {} {}",
-                    idx + 1,
-                    files.len(),
-                    "planning".green(),
-                    file.path.display(),
-                )?;
-            }
-
+        for file in files {
             let steps = match &file.ty {
                 SourceFileType::Note { date } => self.plan_note(&diary, file, *date)?,
 
@@ -294,12 +283,12 @@ impl AddCmd {
     fn exec_copy(&self, ctxt: ExecCtxt, src: PathBuf, dst: DiaryFileId) -> Result<()> {
         writeln!(
             ctxt.env.stdout,
-            "  {}/{}: {} `{}` to `{}`",
-            ctxt.step_idx + 1,
-            ctxt.step_count,
+            "  {} `{}` to `{}` [{}/{}]",
             "copying".green(),
             src.display(),
             dst,
+            ctxt.step_idx + 1,
+            ctxt.step_count,
         )?;
 
         if !self.dry_run {
@@ -314,12 +303,12 @@ impl AddCmd {
     fn exec_skip(&self, ctxt: ExecCtxt, src: PathBuf, reason: String) -> Result<()> {
         writeln!(
             ctxt.env.stdout,
-            "  {}/{}: {} `{}` ({})",
-            ctxt.step_idx + 1,
-            ctxt.step_count,
+            "  {} `{}` ({}) [{}/{}]",
             "skipping".green(),
             src.display(),
             reason,
+            ctxt.step_idx + 1,
+            ctxt.step_count,
         )?;
 
         ctxt.stats.skipped += 1;
@@ -330,12 +319,12 @@ impl AddCmd {
     fn exec_remove(&self, ctxt: ExecCtxt, src: PathBuf, reason: String) -> Result<()> {
         writeln!(
             ctxt.env.stdout,
-            "  {}/{}: {} `{}` ({})",
-            ctxt.step_idx + 1,
-            ctxt.step_count,
+            "  {} `{}` ({}) [{}/{}]",
             "removing".green(),
             src.display(),
             reason,
+            ctxt.step_idx + 1,
+            ctxt.step_count,
         )?;
 
         if !self.dry_run {

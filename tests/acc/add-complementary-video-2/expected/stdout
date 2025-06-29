@@ -3,8 +3,8 @@ scanning
 planning
 
 executing
-  1/2: removing `source/IMG_001.jpg` (already in the diary)
-  2/2: removing `source/IMG_001.mp4` (already in the diary as a photo)
+  removing `source/IMG_001.jpg` (already in the diary) [1/2]
+  removing `source/IMG_001.mp4` (already in the diary as a photo) [2/2]
 
 summary
   removed 2 files

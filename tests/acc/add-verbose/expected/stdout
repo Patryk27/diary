@@ -7,20 +7,14 @@ scanning
   found source/image-c.jpg
 
 planning
-  1/6: planning source/2018-01-01.org
-  2/6: planning source/2018-01-02.org
-  3/6: planning source/2018-01-03.org
-  4/6: planning source/image-a.jpg
-  5/6: planning source/image-b.jpg
-  6/6: planning source/image-c.jpg
 
 executing
-  1/6: copying `source/2018-01-01.org` to `diary:2018/01/01/index.org`
-  2/6: copying `source/2018-01-02.org` to `diary:2018/01/02/index.org`
-  3/6: copying `source/2018-01-03.org` to `diary:2018/01/03/index.org`
-  4/6: copying `source/image-a.jpg` to `diary:2018/01/02/image-a.jpg`
-  5/6: copying `source/image-b.jpg` to `diary:2018/01/03/image-b.jpg`
-  6/6: copying `source/image-c.jpg` to `diary:2018/01/04/image-c.jpg`
+  copying `source/2018-01-01.org` to `diary:2018/01/01/index.org` [1/6]
+  copying `source/2018-01-02.org` to `diary:2018/01/02/index.org` [2/6]
+  copying `source/2018-01-03.org` to `diary:2018/01/03/index.org` [3/6]
+  copying `source/image-a.jpg` to `diary:2018/01/02/image-a.jpg` [4/6]
+  copying `source/image-b.jpg` to `diary:2018/01/03/image-b.jpg` [5/6]
+  copying `source/image-c.jpg` to `diary:2018/01/04/image-c.jpg` [6/6]
 
 summary
   copied 6 files

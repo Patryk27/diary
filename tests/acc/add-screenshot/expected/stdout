@@ -3,8 +3,8 @@ scanning
 planning
 
 executing
-  1/2: copying `source/Screenshot 2018-01-02 at 12.34.56.jpg` to `diary:2018/01/02/12-34-56 screenshot.jpg`
-  2/2: removing `source/Screenshot 2018-01-02 at 12.34.56.jpg` (just added into the diary)
+  copying `source/Screenshot 2018-01-02 at 12.34.56.jpg` to `diary:2018/01/02/12-34-56 screenshot.jpg` [1/2]
+  removing `source/Screenshot 2018-01-02 at 12.34.56.jpg` (just added into the diary) [2/2]
 
 summary
   copied 1 file

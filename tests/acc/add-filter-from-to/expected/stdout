@@ -3,14 +3,14 @@ scanning
 planning
 
 executing
-  1/8: copying `source/2018-01-02.org` to `diary:2018/01/02/index.org`
-  2/8: removing `source/2018-01-02.org` (just added into the diary)
-  3/8: copying `source/2018-01-03.org` to `diary:2018/01/03/index.org`
-  4/8: removing `source/2018-01-03.org` (just added into the diary)
-  5/8: copying `source/image-a.jpg` to `diary:2018/01/02/image-a.jpg`
-  6/8: removing `source/image-a.jpg` (just added into the diary)
-  7/8: copying `source/image-b.jpg` to `diary:2018/01/03/image-b.jpg`
-  8/8: removing `source/image-b.jpg` (just added into the diary)
+  copying `source/2018-01-02.org` to `diary:2018/01/02/index.org` [1/8]
+  removing `source/2018-01-02.org` (just added into the diary) [2/8]
+  copying `source/2018-01-03.org` to `diary:2018/01/03/index.org` [3/8]
+  removing `source/2018-01-03.org` (just added into the diary) [4/8]
+  copying `source/image-a.jpg` to `diary:2018/01/02/image-a.jpg` [5/8]
+  removing `source/image-a.jpg` (just added into the diary) [6/8]
+  copying `source/image-b.jpg` to `diary:2018/01/03/image-b.jpg` [7/8]
+  removing `source/image-b.jpg` (just added into the diary) [8/8]
 
 summary
   copied 4 files

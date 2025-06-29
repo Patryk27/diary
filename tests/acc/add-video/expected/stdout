@@ -3,10 +3,10 @@ scanning
 planning
 
 executing
-  1/4: copying `source/IMG_001.mp4` to `diary:2018/01/02/12-00-00 001.mp4`
-  2/4: removing `source/IMG_001.mp4` (just added into the diary)
-  3/4: copying `source/IMG_002.mp4` to `diary:2018/01/02/12-00-00 002.mp4`
-  4/4: removing `source/IMG_002.mp4` (just added into the diary)
+  copying `source/IMG_001.mp4` to `diary:2018/01/02/12-00-00 001.mp4` [1/4]
+  removing `source/IMG_001.mp4` (just added into the diary) [2/4]
+  copying `source/IMG_002.mp4` to `diary:2018/01/02/12-00-00 002.mp4` [3/4]
+  removing `source/IMG_002.mp4` (just added into the diary) [4/4]
 
 summary
   copied 2 files

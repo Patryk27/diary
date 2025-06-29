@@ -3,16 +3,16 @@ scanning
 planning
 
 executing
-  1/10: copying `source/2018-01-02.org` to `diary:2018/01/02/index.org`
-  2/10: removing `source/2018-01-02.org` (just added into the diary)
-  3/10: copying `source/2018-01-03.org` to `diary:2018/01/03/index.org`
-  4/10: removing `source/2018-01-03.org` (just added into the diary)
-  5/10: copying `source/image-a.jpg` to `diary:2018/01/02/image-a.jpg`
-  6/10: removing `source/image-a.jpg` (just added into the diary)
-  7/10: copying `source/image-b.jpg` to `diary:2018/01/03/image-b.jpg`
-  8/10: removing `source/image-b.jpg` (just added into the diary)
-  9/10: copying `source/image-c.jpg` to `diary:2018/01/04/image-c.jpg`
-  10/10: removing `source/image-c.jpg` (just added into the diary)
+  copying `source/2018-01-02.org` to `diary:2018/01/02/index.org` [1/10]
+  removing `source/2018-01-02.org` (just added into the diary) [2/10]
+  copying `source/2018-01-03.org` to `diary:2018/01/03/index.org` [3/10]
+  removing `source/2018-01-03.org` (just added into the diary) [4/10]
+  copying `source/image-a.jpg` to `diary:2018/01/02/image-a.jpg` [5/10]
+  removing `source/image-a.jpg` (just added into the diary) [6/10]
+  copying `source/image-b.jpg` to `diary:2018/01/03/image-b.jpg` [7/10]
+  removing `source/image-b.jpg` (just added into the diary) [8/10]
+  copying `source/image-c.jpg` to `diary:2018/01/04/image-c.jpg` [9/10]
+  removing `source/image-c.jpg` (just added into the diary) [10/10]
 
 summary
   copied 5 files
