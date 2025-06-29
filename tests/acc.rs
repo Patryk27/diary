@@ -17,7 +17,6 @@ use test_case::test_case;
 #[test_case("add-remove-and-dry-run")]
 #[test_case("add-screenshot")]
 #[test_case("add-smoke")]
-#[test_case("add-verbose")]
 #[test_case("add-video")]
 #[test_case("add-where-date-is-in-file-name")]
 fn test(case: &str) {

@@ -1,1 +1,1 @@
-diary add --diary $diary --source $source --remove --verbose
+diary add --diary $diary --source $source --remove

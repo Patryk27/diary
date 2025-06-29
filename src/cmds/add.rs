@@ -35,9 +35,6 @@ pub struct AddCmd {
 
     #[clap(long)]
     dry_run: bool,
-
-    #[clap(long)]
-    verbose: bool,
 }
 
 impl AddCmd {
@@ -65,9 +62,7 @@ impl AddCmd {
             .iter()?
             .map(|file| match file? {
                 FoundSourceFile::Recognized(file) => {
-                    if self.verbose {
-                        writeln!(env.stdout, "  {} {}", "found".green(), file.path.display())?;
-                    }
+                    writeln!(env.stdout, "  {} {}", "found".green(), file.path.display())?;
 
                     Ok(Some(file))
                 }

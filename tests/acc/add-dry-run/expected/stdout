@@ -1,6 +1,13 @@
 --dry-run is active
 
 scanning
+  found source/2018-01-01.org
+  found source/2018-01-02.org
+  found source/2018-01-03.org
+  found source/image-a.jpg
+  found source/image-b.jpg
+  found source/image-c.jpg
+  found source/video.mp4
 
 planning
 
